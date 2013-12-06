@@ -26,9 +26,17 @@ Javascript
 
 Options
 ===============
-
-width: width of custom upload input
-
-height: height of custom upload input
-
-inputName: name of the input tag
+<table>
+  <tr>
+    <th>Option</th><th>Description</th>
+  </tr>
+  <tr>
+    <td>width</td><td>width of custom upload input</td>
+  </tr>
+  <tr>
+    <td>height</td><td>height of custom upload input</td>
+  </tr>
+  <tr>
+    <td>inputName</td><td>name of the input tag</td>
+  </tr>
+</table>
