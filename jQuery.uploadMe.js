@@ -4,7 +4,6 @@
  <iframe id="iframe" frameborder="0"></iframe>
  
  $("iframe").uploadMe({
-	//imgUrl: "/img/meganfoxsupergirl.jpg",
 	width: 200,
 	height: 200,
 	inputName: "image"
@@ -18,9 +17,7 @@
 	 * imgUrl
 	 * action 
 	 * inputName
-	 * 
 	 * */
-	
 	
 	var tools = {
 		
@@ -105,7 +102,6 @@
 						var vals = {
 							left: e.pageX - 200,
 							top: e.pageY - 120}
-							//console.log("MM",e,vals);
 						input.css(vals);
 					});
 
@@ -116,7 +112,6 @@
 						form.submit();
 					})
 					
-					//console.log(form);
 					iframeBody.append(cover);
 					iframeBody.append(form);
 					
