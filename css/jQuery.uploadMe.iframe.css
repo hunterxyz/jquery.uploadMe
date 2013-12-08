@@ -1,0 +1,27 @@
+body{
+	overflow: hidden;
+	margin: 0;
+}
+.uploadMe_cover{
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+}
+.uploadMe_mask{
+	position: absolute;
+	z-index: 2;
+}
+.uploadMe_input{
+	position: absolute;
+	cursor: pointer;
+}
+.uploadMe_form{
+	margin: 0;
+	position: absolute;
+	z-index: 5;
+	opacity: 0;
+	overflow: hidden;
+	top: 0;
+	left: 0;
+}
