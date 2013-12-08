@@ -1,26 +1,27 @@
-/*
- USAGE:
- 
- <iframe id="iframe" frameborder="0"></iframe>
- 
- $("iframe").uploadMe({
-	width: 200,
-	height: 200,
-	inputName: "image"
-})
- * */
-
 (function( $ ){
 	/*
-	 * width
-	 * height
-	 * imgUrl
-	 * action 
-	 * inputName
+	width: 100,
+	height: 100,
+	action: "/postme.php",
+	imgUrl: "http://akana.co.uk/wp-content/uploads/2012/03/shutterstock_73564222-sample.jpg",
+	inputName: "file",
+	onLoad: null,
+	callback: null,
+	activateMask: false,
 	 * */
 	
+	
 	var tools = {
-		
+		appendMask: function($this){
+			var data = $this.data('uploadMe');
+			var mask = $("<img/>").prop("src",data.options.imgMask);
+			mask.addClass("uploadMe_mask");
+			mask.css({
+				position: "absolute",
+			    "z-index": 2
+			});
+			data.iframe.contents().find("body").append(mask);
+		}
 	};
 	var methods = {
 		init : function( options ) {
@@ -28,102 +29,207 @@
 			return this.each(function(){
 	         
 				var $this = $(this);
-				var contents = $this.contents();
-				var iframeBody = contents.find("body");
+				
 				
 				data = $this.data('uploadMe');
 
 				// If the plugin hasn't been initialized yet
 				if ( ! data ) {
+					if (!options){
+						options = {};
+					}
 					
-					var iframe = $this;
+					$this.addClass("uploadMe");
 					
-					var width = options.width || 100;
-					var height = options.height || 100;
-					var action = options.action || "/postme.php";
-					var imgUrl = options.imgUrl || "http://akana.co.uk/wp-content/uploads/2012/03/shutterstock_73564222-sample.jpg";
-					var inputName = options.inputName || "file";
+					var iframe = $.parseHTML('<iframe id="iframe" frameborder="0"></iframe>');
+					iframe = $(iframe);
 					
-					var input = contents.find("input[type=file]");
-					
-					var cover = $("<img>").prop("src", imgUrl).css({
-						position: "absolute",
-						"z-index": 1,
-						top: 0,
-						left: 0,
-						width: width,
-						height: height
-					});
-					
-					var form = $.parseHTML('<form id="fileForm" action="'+ action +'" method="POST" enctype="multipart/form-data">'+
-						'<input type="file" name="'+ inputName +'"/>' +
-					'</form>');
-					
-					
-					form = $(form);
-					form.css({
-						margin: 0,
-						position: "absolute",
-						"z-index": 5,
-						opacity: 1,
-						height: height,
-						width: width,
-						overflow: "hidden"
-					});
-					
-					var input = form.find("input").css({
-						position: "absolute",
-						height: "200px",
-						cursor: "pointer",
-						opacity: 0
-					});
-					
-					$this.css({
-						overflow: "hidden",
-						height: height,
-						width: width
-					});
-					
-					iframeBody.css({
-						overflow: "hidden",
-						height: height,
-						width: width,
-						margin: 0
-					});
-					
-					$this.on("mouseenter",function(e){
-						var vals = {
-							left: e.pageX - 470 - 200,
-							top: e.pageY - 302 - 120}
-							//console.log(vals);
-							//console.log(e,vals);
-						input.css(vals);
-					});
-					iframeBody.on("mousemove",function(e){
-						var vals = {
-							left: e.pageX - 200,
-							top: e.pageY - 120}
-						input.css(vals);
-					});
-
-					input.on("change",function(){
-						$this.load(function(){});
-						$this.off("mouseenter");
-						iframeBody.off("mousemove");
-						form.submit();
-					})
-					
-					iframeBody.append(cover);
-					iframeBody.append(form);
-					
-					
-					$this.data('uploadMe', {
-							target: $this,
-							contents: contents,
-							options: options
+					iframe.load(function(){
+						$(this).off("load");
+						var iframe = $this.find("iframe");
+						
+						var contents = iframe.contents();
+						var iframeBody = contents.find("body");
+						
+						var defaultOptions = {
+							width: 100,
+							height: 100,
+							action: "/postme.php",
+							imgUrl: "http://akana.co.uk/wp-content/uploads/2012/03/shutterstock_73564222-sample.jpg",
+							inputName: "file",
+							onLoad: null,
+							callback: null,
+							activateMask: false,
+							//cssDir: "/css"
+						};
+						
+						
+						var width = parseInt($this.css("width"));
+						var height = parseInt($this.css("height"));
+						var action = options.action || "/postme.php";
+						var imgUrl = options.imgUrl || "http://akana.co.uk/wp-content/uploads/2012/03/shutterstock_73564222-sample.jpg";
+						var inputName = options.inputName || "file";
+						var onLoad = options.onLoad || null;
+						var callback = options.callback || null;
+						var activateMask = options.activateMask || false;
+						//var cssDir = options.cssDir || defaultOptions.cssDir;
+						
+						if (onLoad){
+							onLoad();
+						}
+						
+						//var cssLink = $("<link rel='stylesheet' href='"+cssDir+"/jQuery.uploadMe.iframe.css' type='text/css'>");
+						//contents.find("head").append(cssLink);
+						
+						var resultImageName = options.resultImageName || "image";
+						var imgMask = options.imgMask || null;
+						
+						var cover = $("<img>")
+							.prop("src", imgUrl)
+							.addClass("uploadMe_cover")
+							.css({
+								width: width,
+								height: height,
+								position: "absolute",
+								"z-index": 1,
+								top: 0,
+								left: 0,
+							});
+						
+						var form = $.parseHTML('<form id="fileForm" action="'+ action +'" method="POST" enctype="multipart/form-data">'+
+							'<input type="file" name="'+ inputName +'"/>' +
+						'</form>');
+						
+						form = $(form);
+						
+						var input = form.find("input")
+							.addClass("uploadMe_input")
+							.css({
+								height: height,
+								position: "absolute",
+								cursor: "pointer"
+							});
+						
+						iframe.css({
+							height: height,
+							width: width
+							
+							
+						
 						});
+						
+						iframeBody.css({
+							overflow: "hidden",
+							height: height,
+							width: width,
+							margin: 0
+						});
+						
+						form.addClass("uploadMe_form")
+						.css({
+							height: height,
+							width: width,
+							
+							margin: 0,
+							position: "absolute",
+							"z-index": 5,
+							opacity: 0,
+							overflow: "hidden",
+							top: 0,
+							left: 0
+						});
+						
+						iframe.on("mouseenter",function(e){
+							form.click();
+							var vals = {
+								left: e.pageX - 450,
+								top: 0
+							}
+							//console.log(e.pageX,vals);
+							input.css(vals);
+						});
+						
+						$this.on("mousemove",function(e){
+							var vals = {
+								left: e.pageX - 450,
+								top: 0
+							}
+							//console.log("MM",e.pageX,vals);
+							input.css(vals);
+						});
+						
+						iframeBody.on("mousemove",function(e){
+							var vals = {
+								left: e.pageX - 200,
+								top: 0
+							}
+							//console.log("MM2",e.pageX,width + width/3);
+							input.css(vals);
+						});
+						
+						input.on("change",function(){
+							
+							iframe.load(function(){
+								var responseText = $(this).contents().find("body").text()
+								var res = eval('['+responseText+']');
+								if (callback){
+									callback(res[0]);
+								}
+								$this.uploadMe("destroy");
+								var tmpOptions = $.extend({},options);
+								tmpOptions.imgUrl = res[0][resultImageName];
+								tmpOptions.onLoad = function(){
+									if (tmpOptions.imgMask){
+										var mask = $("<img/>")
+											.prop("src",tmpOptions.imgMask)
+											.addClass("uploadMe_mask")
+											.css({
+												position: "absolute",
+												"z-index": 2
+											});
+										$this.find("iframe").contents().find("body").append(mask);
+									}
+									
+								};
+								iframe.off("load");
+								$this.uploadMe(tmpOptions);
+								
+							});
+							
+							iframe.off("mouseenter");
+							iframeBody.off("mousemove");
+							form.submit();
+						})
+						
+						
+						$this.data('uploadMe', {
+								target: $this,
+								iframe: iframe,
+								contents: contents,
+								options: options
+							});
+						
+						iframeBody.append(cover);
+						iframeBody.append(form);
+						
+						if (activateMask){
+							tools.appendMask($this);
+						}
+					});
+					$this.append(iframe);
 		         }
 			});
+		},
+		reset: function(options){
+			var $this = $(this);
+			data = $this.data('uploadMe');
+			if ( data ){
+			
+				$this.html("");
+				$this.removeData('uploadMe');
+				$this.uploadMe(options);
+			}
+			
 		},
 		destroy : function( ) {
 	
@@ -131,9 +237,10 @@
 	
 				var $this = $(this),
 				data = $this.data('uploadMe');
-	
+				$this.find("iframe").remove();
+				
 				$(window).unbind('.uploadMe');
-				data.tooltip.remove();
+				
 				$this.removeData('uploadMe');
 	
 			});
