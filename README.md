@@ -18,10 +18,11 @@ HTML
 
 Javascript
 
-	$("iframe").uploadMe({
+	$('#iframe').uploadMe({
 		width: 200,
 		height: 200,
-		inputName: "image"
+		inputName: 'image',
+		action: '/postme.php'
 	});
 
 Options
