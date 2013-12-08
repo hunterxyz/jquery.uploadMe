@@ -75,6 +75,7 @@
 						position: "absolute",
 						height: "200px",
 						cursor: "pointer",
+						opacity: 0
 					});
 					
 					$this.css({
