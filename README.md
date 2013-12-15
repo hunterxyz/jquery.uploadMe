@@ -5,7 +5,7 @@ jquery.uploadMe
 Description
 ===============
 
-jQuery plugin for a custom upload input.
+jQuery plugin for a custom upload input, created specially for images upload.
 
 Tested browser IE8+ Firefox Chrome
 
